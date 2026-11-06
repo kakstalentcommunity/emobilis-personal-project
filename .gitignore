@@ -3,6 +3,8 @@ backend/staticfiles/
 frontend/node_modules/
 backend/.env
 .env
+.env.local
+.vercel/
 backend/db.sqlite3
 __pycache__/
 *.py[cod]

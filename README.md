@@ -51,13 +51,46 @@ For a phone on the same Wi-Fi, add the laptop's local IP address to `ALLOWED_HOS
 - `frontend/src/` contains four small React islands. Vite bundles them together into `backend/static/js/react/app.js`; Django includes that bundle only on the diner, kitchen, waiter and dashboard pages. The React screens call plain Django JSON views under `/api/`.
 - Orders are checked and priced again on the server. Kitchen and waiter screens poll the server at intervals, so no separate realtime service is needed.
 
-## Deploy to Render
+## Deploy with Vercel and Render
 
-1. Create a PostgreSQL database on Render and copy its **internal** connection URL.
-2. Create one Web Service connected to this repository.
-3. Set the Root Directory to the repository root and Build Command to `bash build.sh`.
-4. Set Start Command to `cd backend && gunicorn config.wsgi:application`.
-5. Set environment variables: `DATABASE_URL` (the database URL), `SECRET_KEY` (a long random value), `DEBUG=0`, `ALLOWED_HOSTS` (your Render hostname), and `CSRF_TRUSTED_ORIGINS=https://your-service.onrender.com`. Set `SITE_BASE_URL` to the public HTTPS service URL.
-6. After deployment, use the Render Shell to run `cd backend && python manage.py seed_demo`.
+The Django app and its frontend are hosted on Vercel. Render provides the PostgreSQL database.
 
-The service uses WhiteNoise for collected static files. Uploaded files are not used; menu photos are external image URLs entered by the owner.
+### 1. Create the Render database
+
+1. In Render, create a PostgreSQL database. Choose a region close to your Vercel deployment if available.
+2. Copy its **External Database URL**. Vercel is outside Render's private network, so it cannot use Render's internal URL.
+
+### 2. Import the repository into Vercel
+
+1. In Vercel, import this GitHub repository and set the project Root Directory to the repository root (the folder containing `vercel.json`).
+2. Keep the build command from `vercel.json`: `npm --prefix frontend ci && npm --prefix frontend run build`.
+3. Set these environment variables for **Production**:
+
+   | Variable | Value |
+   | --- | --- |
+   | `DATABASE_URL` | Render's External Database URL |
+   | `SECRET_KEY` | A new, long random secret |
+   | `DEBUG` | `0` |
+   | `ALLOWED_HOSTS` | `.vercel.app` (and your custom domain, if you add one) |
+   | `CSRF_TRUSTED_ORIGINS` | `https://*.vercel.app` (and `https://your-domain.example` if used) |
+   | `SITE_BASE_URL` | The production URL, such as `https://your-project.vercel.app` |
+
+   Use the Vercel production URL as `SITE_BASE_URL` so table QR codes lead to the live site. Keep the database URL and secret in Vercel's environment settings; do not commit them into the repository.
+
+4. Deploy. Vercel detects the Django app under `backend/`; the root `requirements.txt` installs its Python dependencies. The frontend build writes the React bundle into Django's static directory, and Vercel serves Django's collected static files.
+
+### 3. Initialize the production database
+
+Run these commands from the repository root in PowerShell after setting up your local virtual environment. Use the Render **External Database URL** for this one-time setup:
+
+```powershell
+$env:DATABASE_URL = "paste-the-render-external-database-url-here"
+python -m pip install -r requirements.txt
+python backend\manage.py migrate
+python backend\manage.py seed_demo
+Remove-Item Env:DATABASE_URL
+```
+
+The demo staff accounts are `owner`, `kitchen`, and `waiter`, each with password `demo1234`. Change those passwords before using the site with real staff. To apply future model migrations, run `python backend\manage.py migrate` against the same production `DATABASE_URL` before relying on the new schema.
+
+For a custom domain, add it in Vercel and include it in `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, and `SITE_BASE_URL` as appropriate. Uploaded files are not used; menu photos are stored as image URLs.
