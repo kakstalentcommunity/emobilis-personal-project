@@ -7,6 +7,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'tabletap-local-development-key-change-in-p
 DEBUG = os.getenv('DEBUG', '1') == '1'
 VERCEL_URL = os.getenv('VERCEL_URL', '')
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver,10.1.1.16,192.168.137.1,.vercel.app').split(',') if host.strip()]
+# Accept Vercel's production alias and per-deployment preview domains even
+# when ALLOWED_HOSTS is explicitly set in the Vercel project environment.
+if '.vercel.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.vercel.app')
 if VERCEL_URL and VERCEL_URL not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(VERCEL_URL)
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if origin.strip()]
