@@ -27,7 +27,7 @@ class Command(BaseCommand):
         products=[]
         for group,rows in MENU.items():
             for name,desc,price,cost,prep in rows:
-                photo={'Nyama choma':'/static/images/image%202.png','Chicken pilau':'/static/images/image%203.png','Fried chicken':'/static/images/image%204.png'}.get(name,'')
+                photo={'Nyama choma':'/static/images/image-2.png','Chicken pilau':'/static/images/image-3.png','Fried chicken':'/static/images/image-4.png'}.get(name,'')
                 product,_=MenuItem.objects.update_or_create(name=name,defaults={'category':categories[group],'description':desc,'price':Decimal(price),'cost_price':Decimal(cost),'prep_minutes':prep,'image_url':photo})
                 products.append(product)
         for number in range(1,9):DiningTable.objects.get_or_create(number=number)
