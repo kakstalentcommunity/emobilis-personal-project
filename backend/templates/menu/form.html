@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block title %}{{ title }} | TableTap{% endblock %}{% block content %}<section class="form-panel"><h1>{{ title }}</h1><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button" type="submit">Save</button> <a class="button button-outline" href="{% url 'menu:manage' %}">Cancel</a></form></section>{% endblock %}

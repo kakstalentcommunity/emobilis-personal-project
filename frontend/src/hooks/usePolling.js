@@ -1,0 +1,2 @@
+import {useCallback,useEffect,useState} from 'react';
+export function usePolling(load,ms,initial=null){const [data,setData]=useState(initial);const [error,setError]=useState('');const [loading,setLoading]=useState(true);const refresh=useCallback(async()=>{try{setError('');setData(await load());}catch(problem){setError(problem.message||'Could not load data.');}finally{setLoading(false);}},[load]);useEffect(()=>{refresh();const timer=setInterval(refresh,ms);return()=>clearInterval(timer);},[refresh,ms]);return {data,error,loading,refresh};}

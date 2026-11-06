@@ -1,0 +1,8 @@
+backend/static/js/react/
+backend/staticfiles/
+frontend/node_modules/
+backend/.env
+.env
+backend/db.sqlite3
+__pycache__/
+*.py[cod]

@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block title %}Add table | TableTap{% endblock %}{% block content %}<section class="form-panel"><h1>Add table</h1><form method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Save table</button></form></section>{% endblock %}

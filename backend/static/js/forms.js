@@ -1,0 +1,1 @@
+document.addEventListener('submit',event=>{const form=event.target;if(!(form instanceof HTMLFormElement))return;const button=form.querySelector('button[type="submit"],button:not([type])');if(button){button.disabled=true;button.dataset.originalLabel=button.textContent;button.textContent='Saving...';}});

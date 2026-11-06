@@ -1,0 +1,1 @@
+document.addEventListener('error',event=>{const image=event.target;if(image instanceof HTMLImageElement&&image.dataset.fallback!=='1'){image.dataset.fallback='1';image.src='/static/images/placeholder.svg';}},true);
