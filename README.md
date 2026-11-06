@@ -63,7 +63,7 @@ The Django app and its frontend are hosted on Vercel. Render provides the Postgr
 ### 2. Import the repository into Vercel
 
 1. In Vercel, import this GitHub repository and set the project Root Directory to the repository root (the folder containing `vercel.json`).
-2. Keep the build command from `vercel.json`: `npm --prefix frontend ci && npm --prefix frontend run build`.
+2. Keep the build command from `vercel.json`. It builds the React bundle and copies `backend/static/` into Vercel's `public/static/` directory.
 3. Set these environment variables for **Production**:
 
    | Variable | Value |
@@ -77,7 +77,7 @@ The Django app and its frontend are hosted on Vercel. Render provides the Postgr
 
    Use the Vercel production URL as `SITE_BASE_URL` so table QR codes lead to the live site. Keep the database URL and secret in Vercel's environment settings; do not commit them into the repository.
 
-4. Deploy. Vercel detects the Django app under `backend/`; the root `requirements.txt` installs its Python dependencies. The frontend build writes the React bundle into Django's static directory, and Vercel serves Django's collected static files.
+4. Deploy. Vercel detects the Django app under `backend/`; the root `requirements.txt` installs its Python dependencies. The frontend build writes the React bundle into Django's static directory, then the build copies all app assets into `public/static/` for Vercel's CDN.
 
 ### 3. Initialize the production database
 
